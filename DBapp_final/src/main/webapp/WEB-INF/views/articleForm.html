@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>articleDTO Register Form</title>
+    <style>
+        #border {
+            border: 1px solid black;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 40px 40px 0;
+            gap: 20px;
+        }
+
+        #confirm {
+            display: flex;
+            gap: 7px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        p {
+            width: 80px;
+        }
+
+        input {
+            width: 150px;
+        }
+
+        #cancel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            background-color: #EFEFEF;
+            border: 0.7px solid black;
+            border-radius: 2px;
+            font-size: 15px;
+        }
+
+        #cancel:hover {
+            background-color: #e7e6e6;
+        }
+
+        form {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<form action="/article" method="post" enctype="multipart/form-data">
+    <div id="border">
+        <div class="container">
+            <label for="title">title :</label><input type="text" id="title" name="title"/><br/>
+        </div>
+        <div class="container">
+            <p> content : </p><textarea name="content" cols="100" rows="15"></textarea>
+        </div>
+        <input multiple="multiple" type="file" name="multipartFiles"/>
+    </div>
+    <div id="confirm">
+        <input style="margin-top: 20px; padding: 10px" type="submit" value="확인"/>
+        <div id="cancel" style="margin-top: 20px; padding: 10px" onclick="location='http://localhost:8080/'">
+            취소
+        </div>
+    </div>
+</form>
+</body>
+</html>

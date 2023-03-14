@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nhnacademy.edu.mapper.ImageFileMapper">
+    <select id="findImageFileList" resultType="com.nhnacademy.edu.domain.ImageFile">
+        select *
+        from ImageFile
+        where articleId = #{articleId}
+    </select>
+
+    <select id="findImageFile" resultType="com.nhnacademy.edu.domain.ImageFile">
+        select *
+        from ImageFile
+        where saveFileName = #{saveFileName}
+    </select>
+
+    <insert id="insertImageFile" parameterType="com.nhnacademy.edu.domain.ImageFile">
+        INSERT INTO ImageFile (articleId, originalFileName, saveFileName, saveDirectory)
+        VALUES (#{articleId}, #{originalFileName}, #{saveFileName}, #{saveDirectory})
+    </insert>
+</mapper>

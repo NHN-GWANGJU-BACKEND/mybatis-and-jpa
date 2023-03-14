@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nhnacademy.edu.mapper.ArticleMapper">
+    <resultMap id="PostResultMap" type="com.nhnacademy.edu.domain.Post">
+        <id property="id" column="postId"/>
+        <association property="articleDTO" javaType="com.nhnacademy.edu.domain.ArticleDTO">
+            <id property="articleId" column="articleId"/>
+            <result property="title" column="title"/>
+            <result property="content" column="content"/>
+            <result property="createdAt" column="createdAt"/>
+            <result property="delete" column="isDelete"/>
+            <result property="updateAt" column="updateAt"/>
+            <result property="replyCount" column="replyCount"/>
+        </association>
+        <association property="createUser" javaType="com.nhnacademy.edu.domain.User">
+            <id property="userId" column="createUserId"/>
+            <result property="password" column="createUserPassword"/>
+            <result property="userName" column="createUserName"/>
+            <result property="verify" column="createUserVerify"/>
+        </association>
+        <association property="modifyUser" javaType="com.nhnacademy.edu.domain.User">
+            <id property="userId" column="modifyUserId"/>
+            <result property="password" column="modifyUserPassword"/>
+            <result property="userName" column="modifyUserName"/>
+            <result property="verify" column="modifyUserVerify"/>
+        </association>
+    </resultMap>
+
+    <select id="findPostListUser" resultMap="PostResultMap">
+        select a.articleId,
+               a.title,
+               a.createdAt,
+               a.replyCount,
+               a.isDelete,
+               a.updateAt,
+               a.content,
+               u.userId   AS createUserId,
+               u.password As createUserPassword,
+               u.userName AS createUserName,
+               u.verify   AS createUserVerify,
+               m.userId   AS modifyUserId,
+               m.password As modifyUserPassword,
+               m.userName AS modifyUserName,
+               m.verify   As modifyUserVerify,
+               p.postId
+        from Post As p
+                 INNER JOIN Article As a ON p.articleId = a.articleId
+                 INNER JOIN Users As u ON p.createUserId = u.userId
+                 INNER JOIN Users As m ON p.modifyUserId = m.userId
+        WHERE a.isDelete = false and a.title LIKE '%${keyword}%'
+        ORDER BY p.postId
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <select id="findPostListAdmin" resultMap="PostResultMap">
+        select a.articleId,
+               a.title,
+               a.createdAt,
+               a.replyCount,
+               a.isDelete,
+               a.updateAt,
+               a.content,
+               u.userId   AS createUserId,
+               u.password As createUserPassword,
+               u.userName AS createUserName,
+               u.verify   AS createUserVerify,
+               m.userId   AS modifyUserId,
+               m.password As modifyUserPassword,
+               m.userName AS modifyUserName,
+               m.verify   As modifyUserVerify,
+               p.postId
+        from Post As p
+                 INNER JOIN Article As a ON p.articleId = a.articleId
+                 INNER JOIN Users As u ON p.createUserId = u.userId
+                 INNER JOIN Users As m ON p.modifyUserId = m.userId
+        WHERE a.title LIKE '%${keyword}%'
+        ORDER BY p.postId
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+
+    <select id="findPostByArticleId" resultMap="PostResultMap">
+        select a.articleId,
+               a.title,
+               a.createdAt,
+               a.replyCount,
+               a.isDelete,
+               a.updateAt,
+               a.content,
+               u.userId   AS createUserId,
+               u.password As createUserPassword,
+               u.userName AS createUserName,
+               u.verify   AS createUserVerify,
+               m.userId   AS modifyUserId,
+               m.password As modifyUserPassword,
+               m.userName AS modifyUserName,
+               m.verify   As modifyUserVerify,
+               p.postId
+        from Post As p
+                 INNER JOIN Article As a ON p.articleId = a.articleId
+                 INNER JOIN Users As u ON p.createUserId = u.userId
+                 INNER JOIN Users As m ON p.modifyUserId = m.userId
+        WHERE a.articleId = #{id}
+          and a.isDelete = false
+
+    </select>
+
+    <select id="getAdminTotalCount" resultType="int">
+        select count(*)
+        from Post as p
+        INNER JOIN Article as a ON a.articleId = p.articleId
+        WHERE a.title LIKE '%${keyword}%';
+    </select>
+
+    <select id="getUserTotalCount" resultType="int">
+        select count(*)
+        from Post as p
+        INNER JOIN Article as a ON a.articleId = p.articleId
+        WHERE a.isDelete = false and a.title LIKE '%${keyword}%';
+    </select>
+
+
+    <insert id="insertArticle" parameterType="com.nhnacademy.edu.domain.ArticleVO">
+        insert into Article (title, content)
+        value (#{title},#{content})
+        <selectKey keyProperty="id" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="insertPost">
+        insert into Post (articleId, createUserId)
+            value (#{articleId},#{userId});
+    </insert>
+
+    <update id="updateArticle" parameterType="com.nhnacademy.edu.domain.ArticleVO">
+        UPDATE Article
+        SET title    = #{title},
+            content  = #{content},
+            updateAt = #{date}
+        WHERE articleId = #{id}
+    </update>
+
+    <update id="updatePost">
+        UPDATE Post
+        set modifyUserId = #{userId}
+        where postId = #{postId}
+    </update>
+
+    <update id="updateReplyCountPlus">
+        UPDATE Article
+        SET replyCount = replyCount + 1
+        WHERE articleId = #{articleId}
+    </update>
+
+    <update id="updateReplyCountMinus">
+        UPDATE Article
+        SET replyCount = replyCount - 1
+        WHERE articleId = #{articleId}
+    </update>
+
+
+    <update id="deletePost">
+        Update Article
+        set isDelete = true
+        where articleId = #{articleId}
+    </update>
+
+    <update id="restorePost">
+        Update Article
+        set isDelete = false
+        where articleId = #{articleId}
+    </update>
+
+
+</mapper>
+

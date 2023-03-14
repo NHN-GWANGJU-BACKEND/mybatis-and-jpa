@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nhnacademy.edu.mapper.HeartMapper">
+    <resultMap id="PostResultMap" type="com.nhnacademy.edu.domain.Post">
+        <id property="id" column="postId"/>
+        <association property="articleDTO" javaType="com.nhnacademy.edu.domain.ArticleDTO">
+            <id property="articleId" column="articleId"/>
+            <result property="title" column="title"/>
+            <result property="content" column="content"/>
+            <result property="createdAt" column="createdAt"/>
+            <result property="delete" column="isDelete"/>
+            <result property="updateAt" column="updateAt"/>
+            <result property="replyCount" column="replyCount"/>
+        </association>
+        <association property="createUser" javaType="com.nhnacademy.edu.domain.User">
+            <id property="userId" column="createUserId"/>
+            <result property="password" column="createUserPassword"/>
+            <result property="userName" column="createUserName"/>
+            <result property="verify" column="createUserVerify"/>
+        </association>
+        <association property="modifyUser" javaType="com.nhnacademy.edu.domain.User">
+            <id property="userId" column="modifyUserId"/>
+            <result property="password" column="modifyUserPassword"/>
+            <result property="userName" column="modifyUserName"/>
+            <result property="verify" column="modifyUserVerify"/>
+        </association>
+    </resultMap>
+
+    <select id="findByIds" resultType="com.nhnacademy.edu.domain.Heart">
+        select *
+        from Heart
+        where articleId = #{articleId}
+          and userId = #{userId}
+    </select>
+    <select id="findUserHeartPost" resultMap="PostResultMap">
+        select a.articleId,
+               a.title,
+               a.createdAt,
+               a.replyCount,
+               a.isDelete,
+               a.updateAt,
+               a.content,
+               u.userId   AS createUserId,
+               u.password As createUserPassword,
+               u.userName AS createUserName,
+               u.verify   AS createUserVerify,
+               m.userId   AS modifyUserId,
+               m.password As modifyUserPassword,
+               m.userName AS modifyUserName,
+               m.verify   As modifyUserVerify,
+               p.postId
+        from Post As p
+                 INNER JOIN Article As a ON p.articleId = a.articleId
+                 INNER JOIN Users As u ON p.createUserId = u.userId
+                 INNER JOIN Users As m ON p.modifyUserId = m.userId
+                 INNER JOIN Heart As h ON h.articleId = a.articleId
+        WHERE a.isDelete = false
+          and h.userId = #{userId}
+        ORDER BY p.postId
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(*)
+        from Article as a
+                 INNER JOIN Heart as h ON a.articleId = h.articleId
+        WHERE h.userId = #{userId};
+    </select>
+
+    <insert id="insertHeart">
+        insert into Heart (articleId, userId)
+        VALUES (#{articleId}, #{userId})
+    </insert>
+    <delete id="deleteHeart">
+        delete
+        from Heart
+        where articleId = #{articleId}
+          and userId = #{userId}
+    </delete>
+</mapper>

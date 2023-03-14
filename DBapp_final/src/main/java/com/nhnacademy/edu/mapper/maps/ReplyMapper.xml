@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nhnacademy.edu.mapper.ReplyMapper">
+    <resultMap id="replyResultMap" type="com.nhnacademy.edu.domain.Reply">
+        <id property="replyId" column="replyId"/>
+        <result property="articleId" column="articleId"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="delete" column="isDelete"/>
+        <association property="user" javaType="com.nhnacademy.edu.domain.User">
+            <id property="userId" column="userId"/>
+            <result property="password" column="password"/>
+            <result property="userName" column="userName"/>
+            <result property="verify" column="verify"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findReplyByPostId" resultMap="replyResultMap">
+        select u.userId,
+               u.userName,
+               u.password,
+               u.verify,
+               r.replyId,
+               r.articleId,
+               r.content,
+               r.createdAt
+        from Reply As r
+                 INNER JOIN Users AS u ON u.userId = r.userId
+        where articleId = #{articleId}
+    </select>
+
+    <insert id="insertReply">
+        insert into Reply (userId, articleId, content)
+            value (#{userId},#{articleId},#{content});
+    </insert>
+
+    <update id="updateReply">
+        UPDATE Reply
+        SET content = #{content}
+        WHERE replyId = #{replyId}
+    </update>
+
+    <delete id="deleteReply">
+        Delete
+        from Reply
+        where replyId = #{replyId}
+    </delete>
+
+</mapper>
