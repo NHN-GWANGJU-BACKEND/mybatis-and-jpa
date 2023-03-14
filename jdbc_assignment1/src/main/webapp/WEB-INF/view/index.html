@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>Title</title>
+    <style>
+        body {
+            padding: 40px;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 40px;
+            background-color: #EFEFEF;
+            border: 0.7px solid black;
+            border-radius: 2px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div style="display: flex">
+    <h2>로그인 아이디 : </h2>
+    <h2 th:text="${loginId}"/>
+</div>
+<div class="button" onclick="location.href='http://localhost:8080/course'">등록</div>
+<table width="60%">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>선생님</th>
+        <th>과목</th>
+        <th>생성시간</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}" align="center">
+        <td th:text="${course.id}"></td>
+        <td th:text="${course.teacher.name}"/>
+        <td th:text="${course.subject.name}"/>
+        <td th:text="${course.createAt}"></td>
+        <td>
+            <a th:href="@{/course/{courseId}(courseId = ${course.id})}" th:text="수정"/>
+        </td>
+        <td>
+            <a th:href="@{/course/{courseId}/delete(courseId = ${course.id})}" th:text="삭제"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

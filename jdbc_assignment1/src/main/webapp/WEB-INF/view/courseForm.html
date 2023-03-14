@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>course</title>
+</head>
+<body>
+<form action="/course" method="post">
+    <div id="border">
+        <div class="container">
+            <label for="teacher">teacher :</label>
+            <select name="teacher" id="teacher">
+                <option th:each="teacher : ${teachers}" th:value="${teacher.id}"
+                        th:text="${teacher.name}"/>
+            </select>
+
+            <label for="subject">subject :</label>
+            <select name="subject" id="subject">
+                <option th:each="subject : ${subjects}" th:value="${subject.id}"
+                        th:text="${subject.name}"/>
+            </select>
+        </div>
+    </div>
+
+    <div id="confirm">
+        <input style="margin-top: 20px; padding: 10px" type="submit" value="확인"/>
+        <div id="cancel" style="margin-top: 20px; padding: 10px" onclick="location='http://localhost:8080/'">
+            취소
+        </div>
+    </div>
+</form>
+</body>
+</html>
