@@ -1,0 +1,26 @@
+POST /residents HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "name": "임태투",
+  "registrationNumber": "981008-1234568",
+  "genderCode": "남",
+  "birthDate": "1998-10-08 05:20:30",
+  "birthPlaceCode": "병원",
+  "registrationBaseAddress": "광주광역시 서구 상무버들로 40번길 14"
+}
+
+###
+
+PUT /residents/1 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "name": "임태투",
+  "registrationBaseAddress": "부산광역시 1번지",
+  "deathDate": "2100-10-08 05:20:30",
+  "deathPlaceCode": "병원",
+  "deathPlaceAddress": "광주광역시 북구"
+}
