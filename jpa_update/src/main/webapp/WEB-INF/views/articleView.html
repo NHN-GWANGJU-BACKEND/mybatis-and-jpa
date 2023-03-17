@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>article</title>
+
+
+    <style>
+        .border {
+            display: flex;
+            border: 1px solid black;
+            margin: 0 30px 30px 30px;
+            padding: 10px 10px 30px 10px;
+            flex-direction: column;
+        }
+
+        #author_title {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 30px;
+        }
+
+        .atBox {
+            display: flex;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .userInfoTop {
+            display: flex;
+            align-items: center;
+        }
+
+        .modifyBtn {
+            width: 40px;
+            height: 19px;
+            padding: 0;
+            margin: 0;
+            border: 0.7px solid #b1afaf;
+            border-radius: 15px;
+            color: black;
+            background: #b0cde6;
+        }
+
+        .deleteBtn {
+            width: 40px;
+            height: 19px;
+            padding: 0;
+            margin: 0;
+            border: 0.7px solid #b1afaf;
+            border-radius: 15px;
+            color: black;
+            background: #d7d7d7;
+        }
+
+        .likeBtn {
+            width: 70px;
+            height: 19px;
+            padding: 0;
+            margin: 0;
+            border: 0.7px solid #b1afaf;
+            border-radius: 15px;
+            color: #ff0000;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .replyContainer {
+            border-bottom: 1px solid #444444;
+            padding: 0 10px;
+            margin: 0 30px;
+        }
+    </style>
+    <script>
+        function deleteConfirm(articleId, replyId) {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                let f = document.createElement('form');
+                f.setAttribute('method', 'post');
+                f.setAttribute('action', '/reply/delete?articleId=' + articleId + '&replyId=' + replyId);
+                document.body.appendChild(f);
+                f.submit();
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="author_title">
+    <div class="atBox">
+        <span>[작성자 : <span style="color:#afafaf;" th:text="${board.createUser.userName}"/>]</span>
+        <span>[created Time :<span th:text="${board.article.createdAt}"/>]</span>
+    </div>
+    <div class="atBox">
+        <span>[수정자 : <span style="color:#afafaf;" th:text="${board.modifyUser.userName}"/>]  </span>
+        <span>[last modified :<span th:text="${board.article.updateAt}"/>]</span>
+    </div>
+    <div class="atBox">
+        <span>[순번 : <span th:text="${board.article.articleId}"/>]  </span>
+        <span>[제목 :<span th:text="${board.article.title}"/>]</span>
+    </div>
+    <div class="atBox">
+        <form action="/article/heart" method="post" style="gap: 8px; display: flex; align-items: center">
+            <svg th:if="${heart == null}" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                 width="30.000000pt" height="30.000000pt" viewBox="0 0 512.000000 512.000000"
+                 preserveAspectRatio="xMidYMid meet">
+                <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+                   fill="#000000" stroke="none">
+                    <path d="M1295 4670 c-336 -38 -624 -178 -866 -419 -265 -265 -406 -583 -425 -958 -32 -618 422 -1314 1338 -2050 264 -213 530 -400 838 -593 236 -148 349 -210 381 -210 45 0 428 228 721 430 812 558 1395 1145 1656 1666 225 450 239 887 41 1313 -131 282 -407 559 -684 687 -566 261 -1211 154 -1642 -273 l-92 -91 -93 91 c-214 212 -472 344 -773 397 -86 15 -306 20 -400 10z m380 -270 c288 -54 546 -215 726 -451 78 -102 100 -119 159 -119 59 0 81 17 159 118 170 224 399 372 686 444 78 20 114 23 270 22 160 -1 191 -4 276 -26 459 -123 796 -476 885 -928 25 -126 29 -292 10 -400 -34 -194 -124 -411 -250 -605 -350 -538 -1062 -1153 -1949 -1684 l-87 -53 -103 63 c-876 536 -1565 1131 -1915 1653 -195 291 -292 583 -279 840 19 395 211 734 537 950 153 101 310 158 525 190 50 7 286 -2 350 -14z"/>
+                </g>
+            </svg>
+            <svg th:if="${heart != null}" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                 width="30.000000pt" height="30.000000pt" viewBox="0 0 512 512"
+                 style="enable-background:new 0 0 512 512;" xml:space="preserve">
+            <path style="fill:#FF6647;"
+                  d="M474.655,74.503C449.169,45.72,413.943,29.87,375.467,29.87c-30.225,0-58.5,12.299-81.767,35.566 c-15.522,15.523-28.33,35.26-37.699,57.931c-9.371-22.671-22.177-42.407-37.699-57.931c-23.267-23.267-51.542-35.566-81.767-35.566 c-38.477,0-73.702,15.851-99.188,44.634C13.612,101.305,0,137.911,0,174.936c0,44.458,13.452,88.335,39.981,130.418 c21.009,33.324,50.227,65.585,86.845,95.889c62.046,51.348,123.114,78.995,125.683,80.146c2.203,0.988,4.779,0.988,6.981,0 c2.57-1.151,63.637-28.798,125.683-80.146c36.618-30.304,65.836-62.565,86.845-95.889C498.548,263.271,512,219.394,512,174.936C512,137.911,498.388,101.305,474.655,74.503z"/>
+                <path style="fill:#E35336;"
+                      d="M160.959,401.243c-36.618-30.304-65.836-62.565-86.845-95.889 c-26.529-42.083-39.981-85.961-39.981-130.418c0-37.025,13.612-73.631,37.345-100.433c21.44-24.213,49.775-39.271,81.138-43.443 c-5.286-0.786-10.653-1.189-16.082-1.189c-38.477,0-73.702,15.851-99.188,44.634C13.612,101.305,0,137.911,0,174.936 c0,44.458,13.452,88.335,39.981,130.418c21.009,33.324,50.227,65.585,86.845,95.889c62.046,51.348,123.114,78.995,125.683,80.146 c2.203,0.988,4.779,0.988,6.981,0c0.689-0.308,5.586-2.524,13.577-6.588C251.254,463.709,206.371,438.825,160.959,401.243z"/>
+            </svg>
+            <input name="articleId" th:value="${board.article.articleId}" type="hidden">
+            <input name="userId" th:value="${user.userId}" type="hidden">
+            <input name="heart" th:value="${heart}" type="hidden">
+            <button class="likeBtn" type="submit" th:if="${user.verify>0} and ${heart==null}">좋아요</button>
+            <button class="likeBtn" type="submit" th:if="${user.verify>0} and ${heart!=null}">좋아요 해제</button>
+        </form>
+    </div>
+</div>
+<div class="border">
+    <h2>content</h2>
+    <div id="content" th:text="${board.article.content}"/>
+</div>
+<div class="border">
+    <div style="gap: 7px; display: flex; flex-direction: column" id="imageFiles">
+        <div th:each="imageFile :${imageFiles}">
+            <a th:href="'/article/download?saveName='+${imageFile.saveFileName}" th:text="${imageFile.originalFileName}"
+               target="_blank"/>
+        </div>
+    </div>
+</div>
+<div style="margin-top: 20px">
+    <h3 style="margin:10px 30px; padding: 0 10px;" th:text="'댓글('+${board.article.replyCount}+')'"/>
+    <div class="replyContainer" th:each="reply : ${replies}">
+        <div th:id="'modifyView' + ${reply.replyId}">
+            <div style="font-size: 13px;">
+                <div class="userInfoTop" style="display: flex; gap: 8px">
+                    <p th:text="${reply.user.userName}"></p>
+                    <div style="display: flex; margin-left: 20px; gap:5px"
+                         th:if="${reply.user.userId == user.userId} or ${user.verify==9}">
+                        <button class="modifyBtn" type="button"
+                                th:onclick="|javascript:modifyView(${reply.replyId})|">수정
+                        </button>
+                        <button class="deleteBtn"
+                                th:onclick="|javascript:deleteConfirm(${board.article.articleId},${reply.replyId})|">
+                            삭제
+                        </button>
+                    </div>
+                </div>
+                <p th:text="${reply.createdAt}" style="margin: 0"></p>
+            </div>
+            <p th:text="${reply.content}"></p>
+        </div>
+        <div th:id="'modifyForm'+${reply.replyId}" style="display: none">
+            <form action="/reply/modify" method="post">
+                <div>
+                    <input type="hidden" name="replyId" th:value="${reply.replyId}">
+                    <input type="hidden" name="articleId" th:value="${board.article.articleId}">
+                    <textarea rows="3" cols="55" placeholder="내용을 작성하세요" name="content" required="required"
+                              th:text="${reply.content}"/>
+                </div>
+                <div>
+                    <button type="submit">수정</button>
+                    <button th:onclick="|javascript:modifyCancel(${reply.replyId})|" type="button">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:if="${user.verify>0}" style="margin:10px 30px; padding: 0 10px;">
+    <form th:action="'/reply/?articleId='+${board.article.articleId}" method="post">
+        <div id="border">
+            <div class="container">
+                <div class="container">
+                    <p> 댓글 : </p><textarea name="content" style="width: 876px; height: 77px;"></textarea>
+                </div>
+                <div id="confirm">
+                    <input style="margin-top: 20px; padding: 10px" type="submit" value="댓글달기"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function modifyCancel(id) {
+        const modifyView = document.getElementById("modifyView" + id);
+        const modifyForm = document.getElementById("modifyForm" + id);
+        modifyView.style.display = '';
+        modifyForm.style.display = 'none';
+    }
+
+    function modifyView(id) {
+        const modifyView = document.getElementById("modifyView" + id);
+        const modifyForm = document.getElementById("modifyForm" + id);
+
+        modifyView.style.display = 'none';
+        modifyForm.style.display = '';
+    }
+</script>
+
+</body>
+</html>

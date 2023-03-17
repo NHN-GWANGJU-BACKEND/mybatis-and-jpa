@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>modify</title>
+    <style>
+        #cancel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            background-color: #EFEFEF;
+            border: 0.7px solid black;
+            border-radius: 2px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<form th:action="'/article/modify?postId='+${board.id}+'&articleId='+${board.articleDTO.articleId}" method="post">
+    <div id="border">
+        <div class="container">
+            <div>
+                <label for="title">title : </label>
+                <input placeholder="제목을 입력해주세요" type="text" id="title" name="title"
+                       th:value="${board.articleDTO.title}"/><br/>
+            </div>
+            <div class="container">
+                <p> content : </p><textarea name="content" cols="100" rows="15"
+                                            th:text="${board.articleDTO.content}"></textarea>
+            </div>
+            <div id="confirm">
+                <input style="margin-top: 20px; padding: 10px" type="submit" value="확인"/>
+                <div id="cancel" style="margin-top: 20px; padding: 10px"
+                     onclick="location='http://localhost:8080/articles'">
+                    취소
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

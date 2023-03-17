@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>userLike</title>
+    <style>
+        body {
+            padding: 40px;
+        }
+
+        .blue {
+            color: blue;
+        }
+
+        .black {
+            color: black;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        #pageContainer {
+            display: flex;
+            padding-left: 0;
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .page-item:last-child {
+            padding: 6px 12px;
+            border: 0.6px solid #D2D2D2;
+        }
+
+        .page-item {
+            padding: 6px 12px;
+            border-left: 0.6px solid #D2D2D2;
+            border-top: 0.6px solid #D2D2D2;
+            border-bottom: 0.6px solid #D2D2D2;
+        }
+
+        .page-item:hover {
+            background-color: #cecece;
+        }
+
+        .page-link {
+            text-decoration: none;
+        }
+
+        .page-link2 {
+            padding: 6px 12px;
+            color: black;
+        }
+    </style>
+
+</head>
+<body>
+<h2 style="margin-bottom: 45px; margin-top: 20px" th:text="${userId}+' Like Posts!!'"></h2>
+<table width="80%">
+    <thead>
+    <tr>
+        <th>순번</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>수정자</th>
+        <th>작성일시</th>
+        <th>댓글 수</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${boards}" align="center">
+        <td th:text="${board.id}"></td>
+        <td>
+            <a th:href="'/article/view?articleId='+${board.articleDTO.articleId}"
+               th:text="${board.articleDTO.title}"/>
+        </td>
+        <td>
+            <a th:if="${board.createUser.verify < 8}" th:href="'/user?userId='+${board.createUser.userId}"
+               th:text="${board.createUser.userName}"></a>
+            <span th:if="${board.createUser.verify >= 8}" th:text="${board.createUser.userName}"></span>
+        </td>
+        <td>
+            <a th:if="${board.modifyUser.verify < 8}" th:href="'/user?userId='+${board.modifyUser.userId}"
+               th:text="${board.modifyUser.userName}"></a>
+            <span th:if="${board.modifyUser.verify >= 8}" th:text="${board.modifyUser.userName}"></span>
+        </td>
+        <td th:text="${board.articleDTO.createdAt}"></td>
+        <td th:text="${board.articleDTO.replyCount}"></td>
+    </tr>
+    </tbody>
+</table>
+<nav>
+    <ul id="pageContainer">
+        <li class="page-item">
+            <a class="page-link" th:href="@{/articles?pageNum=1}" aria-label="Previous">
+                <span aria-hidden="true">처음</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/articles?pageNum={page}
+            (page = ${pagination.prevBlockLastPage})}" aria-label="Previous">
+                <span aria-hidden="true">이전</span>
+            </a>
+        </li>
+        <th:block th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">
+            <li class="page-item"
+                th:with="start = ${pagination.startPage}, end = ${pagination.endPage}"
+                th:each="pageButton : ${#numbers.sequence(start, end)}">
+
+                <a th:if="${pageButton == pagination.page}" class="page-link2"
+                   th:href="@{/articles?pageNum={page} (page = ${pageButton})}"
+                   th:text="${pageButton}"/>
+
+                <a th:if="${pageButton != pagination.page}" class="page-link"
+                   th:href="@{/articles?pageNum={page} (page = ${pageButton})}"
+                   th:text="${pageButton}"/>
+            </li>
+        </th:block>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/articles?pageNum={page} (page = ${pagination.nextBlockFirstPage})}"
+               aria-label="Next">
+                <span aria-hidden="true">다음</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/articles?pageNum={page} (page = ${pagination.totalPageCnt})}"
+               aria-label="Previous">
+                <span aria-hidden="true">끝</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

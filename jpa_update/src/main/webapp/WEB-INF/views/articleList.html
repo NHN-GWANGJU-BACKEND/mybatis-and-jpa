@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>boards</title>
+    <style>
+        body {
+            padding: 40px;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        #pageContainer {
+            display: flex;
+            padding-left: 0;
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .page-item:last-child {
+            padding: 6px 12px;
+            border: 0.6px solid #D2D2D2;
+        }
+
+        .page-item {
+            padding: 6px 12px;
+            border-left: 0.6px solid #D2D2D2;
+            border-top: 0.6px solid #D2D2D2;
+            border-bottom: 0.6px solid #D2D2D2;
+        }
+
+        .page-item:hover {
+            background-color: #cecece;
+        }
+
+        .page-link {
+            text-decoration: none;
+        }
+
+        .page-link2 {
+            padding: 6px 12px;
+            color: black !important;
+        }
+
+        .deleteContainer {
+            cursor: pointer;
+            color: blue;
+        }
+
+        #write {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            background-color: #EFEFEF;
+            border: 0.7px solid black;
+            border-radius: 2px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #bottom {
+            display: flex;
+            width: 80%;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #keywordSearch {
+            display: flex;
+            gap: 5px;
+        }
+
+    </style>
+
+    <script>
+        function deleteConfirm(location) {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                let f = document.createElement('form');
+                f.setAttribute('method', 'post');
+                f.setAttribute('action', '/article/' + location + '/delete');
+                document.body.appendChild(f);
+                f.submit();
+            }
+        }
+    </script>
+</head>
+<body>
+<h2 style="margin-bottom: 45px; margin-top: 20px">NHN DB_APP1 MyBatis Board!!</h2>
+<table width="80%">
+    <thead>
+    <tr>
+        <th>순번</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>수정자</th>
+        <th>작성일시</th>
+        <th>댓글 수</th>
+        <th>수정</th>
+        <th>삭제</th>
+        <th th:if="${user.verify==9}">복구</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${boards}" align="center">
+        <td th:text="${board.boardId}"></td>
+        <td>
+            <a th:href="'/article/view?articleId='+${board.article.articleId}"
+               th:text="${board.article.title}"/>
+        </td>
+        <td>
+            <a th:if="${board.createUser.verify < 8}" th:href="'/user?userId='+${board.createUser.userId}"
+               th:text="${board.createUser.userName}"></a>
+            <span th:if="${board.createUser.verify >= 8}" th:text="${board.createUser.userName}"></span>
+        </td>
+        <td>
+            <a th:if="${board.modifyUser.verify < 8}" th:href="'/user?userId='+${board.modifyUser.userId}"
+               th:text="${board.modifyUser.userName}"></a>
+            <span th:if="${board.modifyUser.verify >= 8}" th:text="${board.modifyUser.userName}"></span>
+        </td>
+        <td th:text="${board.article.createdAt}"></td>
+        <td th:text="${board.article.replyCount}"></td>
+        <td>
+            <a th:if="${user.verify==9} or ${user.userId == board.createUser.userId}"
+               th:href="@{/article/{articleId}/modify(articleId=${board.article.articleId})}">수정</a>
+        </td>
+        <td>
+            <div class="deleteContainer"
+                 th:if="${user.verify==9} or ${user.userId == board.createUser.userId}"
+                 th:onclick="|javascript:deleteConfirm(${board.article.articleId})|">삭제
+            </div>
+        </td>
+        <td th:if="${user.verify==9}">
+            <form th:if="${board.article.isDelete.toString().equals('Y')}"
+                  th:action="'/article/restore?articleId='+${board.article.articleId}" method="post">
+                <button style="background-color: white; color: blue; border: 0; padding: 0;font-size: 16px;cursor: pointer"
+                        type="submit">복구
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!--<nav>-->
+<!--    <ul id="pageContainer">-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" th:href="'/articles?pageNum=1&keyword='+${keyword}"-->
+<!--               aria-label="Previous">-->
+<!--                <span aria-hidden="true">처음</span>-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" th:href="'/articles?pageNum='+${pagination.prevBlockLastPage}+'&keyword='+${keyword}" aria-label="Previous">-->
+<!--                <span aria-hidden="true">이전</span>-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <th:block th:with="start = ${pagination.startPage}, end = ${pagination.endPage}">-->
+<!--            <li class="page-item"-->
+<!--                th:with="start = ${pagination.startPage}, end = ${pagination.endPage}"-->
+<!--                th:each="pageButton : ${#numbers.sequence(start, end)}">-->
+<!--                <a th:if="${pageButton == pagination.page}" class="page-link2"-->
+<!--                   th:href="'/articles?pageNum='+${pageButton}+'&keyword='+${keyword}"-->
+<!--                   th:text="${pageButton}"/>-->
+
+<!--                <a th:if="${pageButton != pagination.page}" class="page-link"-->
+<!--                   th:href="'/articles?pageNum='+${pageButton}+'&keyword='+${keyword}"-->
+<!--                   th:text="${pageButton}"/>-->
+<!--            </li>-->
+<!--        </th:block>-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" th:href="'/articles?pageNum='+${pagination.nextBlockFirstPage}+'&keyword='+${keyword}"-->
+<!--               aria-label="Next">-->
+<!--                <span aria-hidden="true">다음</span>-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" th:href="'/articles?pageNum='+${pagination.totalPageCnt}+'&keyword='+${keyword}"-->
+<!--               aria-label="Previous">-->
+<!--                <span aria-hidden="true">끝</span>-->
+<!--            </a>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--</nav>-->
+<div id="bottom">
+    <div>
+        <form id="keywordSearch" method="post" action="/article/search">
+            <p>검색 : </p>
+            <input name="keyword" type="text"/>
+            <input type="submit" value="검색"/>
+        </form>
+    </div>
+    <div th:if="${user.verify>0}" id="write" style="margin-top: 20px; padding: 10px"
+         onclick="location='http://localhost:8080/article/register'">
+        글작성
+    </div>
+</div>
+
+</body>
+</html>
